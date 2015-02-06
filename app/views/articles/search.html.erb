@@ -24,10 +24,10 @@
   </thead>
 
   <tbody>
-    <% @articles.each do |article| %>
+    <% @articles.each_with_hit do |article, hit| %>
       <tr>
-        <td><%= article.title %></td>
-        <td><%= article.content %></td>
+        <td><%= hit.highlight.title ? (raw hit.highlight.title[0]) : article.title %></td>
+        <td><%= hit.highlight.content ? (raw hit.highlight.content[0]) : article.content %></td>
         <td><%= article.published_on %></td>
         <td><%= link_to 'Show', article %></td>
         <td><%= link_to 'Edit', edit_article_path(article) %></td>
@@ -40,5 +40,4 @@
 <br>
 
 <%= link_to 'New Article', new_article_path %>  <%= link_to 'All Articles', articles_path if params[:q] %>
-<%= link_to 'All users', users_path %>
 

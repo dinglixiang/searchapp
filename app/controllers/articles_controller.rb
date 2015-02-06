@@ -1,3 +1,4 @@
+#require './lib/elasticsearch/model'
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy]
 
@@ -9,9 +10,18 @@ class ArticlesController < ApplicationController
 
   # GET /articles/search
   def search
-    @articles = Article.search(params[:q]).records
+    #@articles = Article.search(params[:q]).records
+    #@articles = Article.search(query: { match: {title: params[:q]}},
+                                #highlight: { fields: { content: {}, title: {} } }).results
+    render json: Elasticsearch::Model.search({
+                                              query: { match: {_all: params[:q]}}, 
+                                              highlight: { fields: { content: {}, title:{}, name:{}}},
+                                              sort: [{title: {order: "desc"}}]
+                                              }, [Article, User, Comment], {explain: :yaml})
+    #render json: Searchable.search(params[:q])
+    #render json: @articles
 
-    render action: "index"
+    #render action: "index"
   end
 
 
